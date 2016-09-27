@@ -9,23 +9,23 @@ nightmare
   .type('#id_username', process.env.USERNAME)
   .type('#id_password', process.env.PASSWORD)
   .click('[type=submit]')
-  .wait()
-
+  .wait(2000)
   // open export panel
+  .click('.menu-button')
+  .wait(2000)
   .click('#exportAllButton')
-  .wait('.id_text')
+  .wait('#id_text')
   .click('#id_text')
-  .wait(500)
-
-  // scrape content
+  .wait(2000)
   .evaluate(function () {
     return document.querySelector('.previewWindow pre').innerText;
-  }, function (exportText) {
+  })
+  .end()
+  .then(function(exportText) {
     var filename = 'workflowy_export.txt';
     console.log('Saving export to ' + filename);
-    fs.writeFile(filename, exportText);
+    fs.writeFileSync(filename, exportText);
   })
-
-  .run(function(err, nightmare){
-    console.log('Done.');
+  .catch(function (error) {
+    console.error('Search failed:', error);
   });
